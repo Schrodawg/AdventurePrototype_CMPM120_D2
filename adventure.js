@@ -16,10 +16,10 @@ class AdventureScene extends Phaser.Scene {
         this.h = this.game.config.height;
         this.s = this.game.config.width * 0.01;
 
-        this.cameras.main.setBackgroundColor('#444');
+        this.cameras.main.setBackgroundColor('#0');
         this.cameras.main.fadeIn(this.transitionDuration, 0, 0, 0);
 
-        this.add.rectangle(this.w * 0.75, 0, this.w * 0.25, this.h).setOrigin(0, 0).setFillStyle(0);
+        // this.add.rectangle(this.w * 0.75, 0, this.w * 0.25, this.h).setOrigin(0, 0).setFillStyle(0);
         this.add.text(this.w * 0.75 + this.s, this.s)
             .setText(this.name)
             .setStyle({ fontSize: `${3 * this.s}px` })
