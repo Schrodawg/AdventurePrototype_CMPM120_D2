@@ -1,6 +1,6 @@
 class scene1 extends AdventureScene {
     constructor() {
-        super("scene1", "First Room");
+        super("scene1", "The Crash");
     }
 
     preload(){
@@ -11,12 +11,12 @@ class scene1 extends AdventureScene {
     }
 
     onEnter() {
-        this.time.delayedCall(1000, () => this.showMessage('I can\'t believe I survived!'));
+        this.time.delayedCall(500, () => this.showMessage('I can\'t believe I survived!'));
         //BG
         let bg1 = this.add.image(this.w*.25, this.h*.5, 'bg1');
         //Player
-        let player = this.add.image(-100, this.h*.75,'guy');
-        player.setScale(.35);
+        let player = this.add.image(-100, this.h*.75,'guy')
+            .setScale(.35);
         //Direction arrow
         let arrow = this.add.image(this.w*.6,this.h*.875,'arrow').setScale(.25);
         //Direction text
@@ -104,32 +104,183 @@ class scene1 extends AdventureScene {
 
 class scene2 extends AdventureScene {
     constructor() {
-        super("scene2", "The second room has a long name (it truly does).");
+        super("scene2", "Inland");
     }
+
+    preload() {
+        this.load.path = './assets/';
+        this.load.image('bg2', 'bgscene2.png');
+        this.load.image('grave', 'grave.png');
+        this.load.image('guy', 'guy.png');
+        this.load.image('arrow', 'arrow.png');
+    }
+
     onEnter() {
-        this.add.text(this.w * 0.3, this.w * 0.4, "just go back")
+        let bg1 = this.add.image(this.w*.25, this.h*.5, 'bg2');
+        let grave = this.add.image(this.w * .6, this.h * .76, 'grave').setScale(.6)
+            .setInteractive()
+            .on('pointerover', () => {
+                this.showMessage('"An explorer? I wonder what he had?..."')
+            })
+            .on('pointerdown', () => {
+                this.showMessage('"Woah! A Machete!"');
+                this.gainItem('Machete');
+                this.tweens.add({
+                    targets: grave,
+                    y: `-=${2 * this.s}`,
+                    alpha: { from: 1, to: 0 },
+                    duration: 1500,
+                    onComplete: () => grave.destroy()
+                });
+            })
+        let player = this.add.image(-100, this.h*.75,'guy')
+            .setScale(.35);
+        let arrow = this.add.image(this.w*.4,this.h*.6,'arrow').setScale(.4).setAngle(-90);
+        this.tweens.add({
+            targets: player,
+            x: this.w*.17,
+            delay: 500,
+            duration: 5000,
+            ease: 'Linear',
+        });
+        let furtherText = this.add.text(this.w * 0.3, this.w * 0.4, "(Go further)")
             .setFontSize(this.s * 2)
             .setInteractive()
             .on('pointerover', () => {
-                this.showMessage("You've got no other choice, really.");
+                this.tweens.add({
+                    targets: furtherText,
+                    x: '+=' + this.s,
+                    repeat: 2,
+                    yoyo: true,
+                    ease: 'Sine.inOut',
+                    duration: 100
+                })
+                this.showMessage('"I\'ve gotta keep moving"');
             })
-            .on('pointerdown', () => {
-                this.gotoScene('scene1');
-            });
+            .on('pointerdown', () => this.gotoScene('scene3'))
+    }
+}
 
-        let finish = this.add.text(this.w * 0.6, this.w * 0.2, '(finish the game)')
+class scene3 extends AdventureScene {
+    constructor() {
+        super("scene3", "Further Inland");
+    }
+
+    preload() {
+        this.load.path = './assets/';
+        this.load.image('bg2', 'bgscene2.png');
+        this.load.image('grave', 'grave.png');
+        this.load.image('guy', 'guy.png');
+        this.load.image('arrow', 'arrow.png');
+    }
+
+    onEnter() {
+        let bg1 = this.add.image(this.w*.25, this.h*.5, 'bg2');
+        let player = this.add.image(-100, this.h*.75,'guy')
+            .setScale(.35);
+        this.tweens.add({
+            targets: player,
+            x: this.w*.17,
+            delay: 500,
+            duration: 5000,
+            ease: 'Linear',
+        });
+        let plant = this.add.graphics();
+        plant.fillStyle(0x00ff51);
+        plant.fillRect(this.w*.487,this.h*.5, 500, 500)
+        let goBack = this.add.text(this.w*.3,this.h*.8, '(go back)')
+        .setFontSize(this.s * 2)
             .setInteractive()
             .on('pointerover', () => {
-                this.showMessage('*giggles*');
                 this.tweens.add({
-                    targets: finish,
-                    x: this.s + (this.h - 2 * this.s) * Math.random(),
-                    y: this.s + (this.h - 2 * this.s) * Math.random(),
+                    targets: goBack,
+                    x: '+=' + this.s,
+                    repeat: 2,
+                    yoyo: true,
                     ease: 'Sine.inOut',
-                    duration: 500
+                    duration: 100
                 });
             })
-            .on('pointerdown', () => this.gotoScene('outro'));
+            .on('pointerdown', () => this.gotoScene('scene2'))
+        let furtherText = this.add.text(this.w*.487+195,this.h*.5+225, "(FOLIAGE)")
+            .setFontSize(this.s * 2)
+            .setStyle({color: '#0'})
+            .setInteractive()
+            .on('pointerover', () => {
+                this.tweens.add({
+                    targets: furtherText,
+                    x: '+=' + this.s,
+                    repeat: 2,
+                    yoyo: true,
+                    ease: 'Sine.inOut',
+                    duration: 100
+                })
+                if (this.hasItem("Machete")) {
+                    this.showMessage('"I could cut right through this!"');
+                } else {
+                    this.showMessage('"This stuff is DENSE, I can\'t get through it. I\'d need a blade or something"');
+                }
+            })
+            .on('pointerdown', () => {
+                if (this.hasItem("Machete")) {
+                    this.loseItem("Machete");
+                    this.showMessage("*slash!*");
+                    this.gotoScene('scene4');
+                }
+            })
+    }
+}
+
+class scene4 extends AdventureScene {
+    constructor() {
+        super("scene4", "Shrine");
+    }
+
+    preload() {
+        this.load.path = './assets/';
+        this.load.image('bg2', 'bgscene2.png');
+        this.load.image('grave', 'grave.png');
+        this.load.image('guy', 'guy.png');
+        this.load.image('arrow', 'arrow.png');
+    }
+
+    onEnter() {
+        let bg4 = this.add.image(this.w*.25, this.h*.5, 'bg2');
+        let player = this.add.image(100, this.h*.75,'guy')
+            .setScale(.35);
+        this.tweens.add({
+            targets: player,
+            x: this.w*.17,
+            delay: 500,
+            duration: 2000,
+            ease: 'Linear',
+        });
+        let artifact = this.add.graphics();
+        artifact.fillStyle(0x0);
+        artifact.fillEllipse(this.w * 0.37, this.w * 0.45, 200, 200, 24);
+        let endText = this.add.text(this.w * 0.5, this.w * 0.45, "(Grab the Artifact)")
+            .setFontSize(this.s * 2)
+            .setInteractive()
+            .on('pointerover', () => {
+                this.tweens.add({
+                    targets: [artifact, endText],
+                    x: '+=' + this.s,
+                    repeat: 2,
+                    yoyo: true,
+                    ease: 'Sine.inOut',
+                    duration: 100
+                })
+                this.showMessage('"What is this??"');
+            })
+            .on('pointerdown', () => {
+                this.tweens.add({
+                    targets: player,
+                    x: this.w*.4,
+                    duration: 5000,
+                    ease: 'Linear',
+                });
+                this.gotoScene('outro');
+            });
     }
 }
 
@@ -199,7 +350,7 @@ const game = new Phaser.Game({
         width: 1920,
         height: 1080
     },
-    scene: [scene1, scene2, Outro],
+    scene: [scene4, Outro],
     title: "Adventure Game",
 });
 
