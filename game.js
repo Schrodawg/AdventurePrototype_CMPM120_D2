@@ -336,8 +336,20 @@ class Outro extends Phaser.Scene {
         super('outro');
     }
     create() {
-        this.add.text(50, 50, "That's all!").setFontSize(50);
-        this.add.text(50, 100, "Click anywhere to restart.").setFontSize(20);
+        this.add.text(1920*.25, 1080*.5, "I turned into a frog! Aw man...",
+        {
+            font: "Courier",
+            color: "#00ff51",
+            align: 'center',
+        })
+        .setFontSize(50);
+        this.add.text(1920*.25, 1080*.75, "Try again?\nI'll still turn into a frog, but that's all right!\nJust click anywhere",
+        {
+            font: "Courier",
+            color: "#ffffff",
+            align: 'center',
+        })
+        .setFontSize(30);
         this.input.on('pointerdown', () => this.scene.start('intro'));
     }
 }
@@ -350,7 +362,7 @@ const game = new Phaser.Game({
         width: 1920,
         height: 1080
     },
-    scene: [scene4, Outro],
+    scene: [Intro, scene1, scene2, scene3, scene4, Outro],
     title: "Adventure Game",
 });
 
